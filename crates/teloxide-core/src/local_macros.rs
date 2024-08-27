@@ -1527,19 +1527,27 @@ macro_rules! TelegramStringId {
         }
 
         impl $struct_name {
-            fn from_str(s: &str) -> Box<Self> { $struct_name::wrap_box(Box::<str>::from(s)) }
+            fn from_str(s: &str) -> Box<Self> {
+                $struct_name::wrap_box(Box::<str>::from(s))
+            }
         }
 
         impl Into<Box<$struct_name>> for String {
-            fn into(self) -> Box<$struct_name> { $struct_name::from_str(&self) }
+            fn into(self) -> Box<$struct_name> {
+                $struct_name::from_str(&self)
+            }
         }
 
         impl Into<Box<$struct_name>> for &str {
-            fn into(self) -> Box<$struct_name> { $struct_name::from_str(self) }
+            fn into(self) -> Box<$struct_name> {
+                $struct_name::from_str(self)
+            }
         }
 
         impl Into<String> for Box<$struct_name> {
-            fn into(self) -> String { String::from($struct_name::peel_ref(&self)) }
+            fn into(self) -> String {
+                String::from($struct_name::peel_ref(&self))
+            }
         }
 
         impl<'de> serde::de::Deserialize<'de> for Box<$struct_name> {
@@ -1568,7 +1576,9 @@ macro_rules! TelegramStringId {
         impl std::ops::Deref for $struct_name {
             type Target = str;
 
-            fn deref(&self) -> &Self::Target { &self.0 }
+            fn deref(&self) -> &Self::Target {
+                &self.0
+            }
         }
     };
 }

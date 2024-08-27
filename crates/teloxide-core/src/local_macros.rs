@@ -1048,7 +1048,7 @@ macro_rules! requester_forward {
     (@method answer_callback_query $body:ident $ty:ident) => {
         type AnswerCallbackQuery = $ty![AnswerCallbackQuery];
 
-        fn answer_callback_query<C>(&self, callback_query_id: C) -> Self::AnswerCallbackQuery where C: Into<String> {
+        fn answer_callback_query<C>(&self, callback_query_id: C) -> Self::AnswerCallbackQuery where C: Into<Box<CallbackQueryId>> {
             let this = self;
             $body!(answer_callback_query this (callback_query_id: C))
         }
@@ -1528,6 +1528,18 @@ macro_rules! TelegramStringId {
 
         impl $struct_name {
             fn from_str(s: &str) -> Box<Self> { $struct_name::wrap_box(Box::<str>::from(s)) }
+        }
+
+        impl Into<Box<$struct_name>> for String {
+            fn into(self) -> Box<$struct_name> { $struct_name::from_str(&self) }
+        }
+
+        impl Into<Box<$struct_name>> for &str {
+            fn into(self) -> Box<$struct_name> { $struct_name::from_str(self) }
+        }
+
+        impl Into<String> for Box<$struct_name> {
+            fn into(self) -> String { String::from($struct_name::peel_ref(&self)) }
         }
 
         impl<'de> serde::de::Deserialize<'de> for Box<$struct_name> {

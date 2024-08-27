@@ -2,6 +2,11 @@ use serde::{Deserialize, Serialize};
 
 use crate::types::{MaybeInaccessibleMessage, Message, User};
 
+TelegramStringId!(
+    #[doc = "An unique identifier for this query."]
+    CallbackQueryId
+);
+
 /// This object represents an incoming callback query from a callback button in
 /// an [inline keyboard].
 ///
@@ -19,7 +24,7 @@ use crate::types::{MaybeInaccessibleMessage, Message, User};
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct CallbackQuery {
     /// An unique identifier for this query.
-    pub id: String,
+    pub id: Box<CallbackQueryId>,
 
     /// A sender.
     pub from: User,
@@ -93,7 +98,7 @@ mod tests {
             "game_short_name":"game_name"
         }"#;
         let expected = CallbackQuery {
-            id: "id".to_string(),
+            id: CallbackQueryId::from_str("id"),
             from: User {
                 id: UserId(12345),
                 is_bot: false,

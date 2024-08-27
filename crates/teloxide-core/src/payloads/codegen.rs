@@ -120,6 +120,7 @@ fn uses(method: &Method) -> String {
             Type::RawTy(raw) => Use::Crate(["use crate::types::", raw, ";"].concat()),
             Type::Url => Use::External(String::from("use url::Url;")),
             Type::DateTime => Use::External(String::from("use chrono::{DateTime, Utc};")),
+            Type::Box(raw) => Use::Crate(["use crate::types::", raw, ";"].concat()),
         }
     }
 
@@ -196,6 +197,8 @@ fn eq_hash_suitable(method: &Method) -> bool {
             Type::RawTy(raw) => {
                 raw != "InputSticker" && raw != "MaskPosition" && raw != "InlineQueryResult"
             }
+
+            Type::Box(_) => true,
         }
     }
 

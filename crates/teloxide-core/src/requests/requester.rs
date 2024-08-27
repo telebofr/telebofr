@@ -815,7 +815,7 @@ pub trait Requester {
     /// For Telegram documentation see [`AnswerCallbackQuery`].
     fn answer_callback_query<C>(&self, callback_query_id: C) -> Self::AnswerCallbackQuery
     where
-        C: Into<String>;
+        C: Into<Box<CallbackQueryId>>;
 
     type GetUserChatBoosts: Request<Payload = GetUserChatBoosts, Err = Self::Err>;
 

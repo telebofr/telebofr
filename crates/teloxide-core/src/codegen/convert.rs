@@ -29,5 +29,6 @@ pub fn convert_for(ty: &Type) -> Convert {
         },
         ty @ Type::Url => Convert::Id(ty.clone()),
         ty @ Type::DateTime => Convert::Into(ty.clone()),
+        ty @ Type::Box(_) => Convert::Into(ty.clone()),
     }
 }

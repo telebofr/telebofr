@@ -16,6 +16,7 @@
 //!   + `ChatId` - type of `chat_id` parameter, in the original documentation
 //!     written as `Integer or String
 //!   + `UserId` - type of `user_id` parameters
+//!   + `CallbackQueryId` - type of `callback_query_id` parameters
 //!   + `ChatAction` - type of `action` param in `sendChatAction` method
 //!   + `AllowedUpdate` inner type of `allowed_updates` in `getUpdates` and
 //!     `setWebhook` (so type is `ArrayOf(AllowedUpdate)`)
@@ -2974,7 +2975,7 @@ Schema(
             params: [
                 Param(
                     name: "callback_query_id",
-                    ty: String,
+                    ty: Box("CallbackQueryId"),
                     descr: Doc(md: "Unique identifier for the query to be answered"),
                 ),
                 Param(

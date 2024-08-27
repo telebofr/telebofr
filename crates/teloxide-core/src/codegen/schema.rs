@@ -82,6 +82,7 @@ pub enum Type {
 
     Url,
     DateTime,
+    Box(String),
 }
 
 impl std::fmt::Display for Type {
@@ -102,6 +103,7 @@ impl std::fmt::Display for Type {
             Type::RawTy(raw) => f.write_str(raw),
             Type::Url => write!(f, "Url"),
             Type::DateTime => write!(f, "DateTime<Utc>"),
+            Type::Box(inner) => write!(f, "Box<{inner}>"),
         }
     }
 }

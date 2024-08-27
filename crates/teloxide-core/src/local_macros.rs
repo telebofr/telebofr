@@ -1532,21 +1532,21 @@ macro_rules! TelegramStringId {
             }
         }
 
-        impl Into<Box<$struct_name>> for String {
-            fn into(self) -> Box<$struct_name> {
-                $struct_name::from_str(&self)
+        impl From<String> for Box<$struct_name> {
+            fn from(value: String) -> Box<$struct_name> {
+                $struct_name::from_str(&value)
             }
         }
 
-        impl Into<Box<$struct_name>> for &str {
-            fn into(self) -> Box<$struct_name> {
-                $struct_name::from_str(self)
+        impl From<&str> for Box<$struct_name> {
+            fn from(value: &str) -> Self {
+                $struct_name::from_str(value)
             }
         }
 
-        impl Into<String> for Box<$struct_name> {
-            fn into(self) -> String {
-                String::from($struct_name::peel_ref(&self))
+        impl From<Box<$struct_name>> for String {
+            fn from(value: Box<$struct_name>) -> String {
+                $struct_name::peel_box(value).to_string()
             }
         }
 

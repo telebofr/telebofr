@@ -1,13 +1,12 @@
 use serde::{Deserialize, Deserializer, Serialize};
 
-use crate::types::{Chat, MaybeAnonymousUser, User};
+use crate::types::{Chat, MaybeAnonymousUser, PollId, User};
 
 #[serde_with::skip_serializing_none]
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct PollAnswer {
-    // FIXME: PollId
     /// Unique poll identifier.
-    pub poll_id: String,
+    pub poll_id: Box<PollId>,
 
     /// If the voter is anonymous, stores the chat that changed the answer to
     /// the poll.

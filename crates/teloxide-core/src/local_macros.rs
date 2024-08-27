@@ -1500,6 +1500,67 @@ macro_rules! requester_forward {
     };// END BLOCK requester_forward_at_method
 }
 
+macro_rules! TelegramStringId {
+    (#[doc = $doc:expr] $struct_name:ident) => {
+        use bytemuck::{TransparentWrapper, TransparentWrapperAlloc};
+
+        #[doc = $doc]
+        #[derive(Debug, derive_more::Display)]
+        #[derive(PartialEq, Eq, PartialOrd, Ord, Hash)]
+        #[derive(serde::Serialize)]
+        #[serde(transparent)]
+        #[repr(transparent)]
+        #[derive(bytemuck::TransparentWrapper)]
+        pub struct $struct_name(pub str);
+
+        impl Clone for Box<$struct_name> {
+            fn clone(&self) -> Self {
+                $struct_name::wrap_box(Box::from($struct_name::peel_ref(self)))
+            }
+        }
+
+        impl From<&$struct_name> for std::sync::Arc<$struct_name> {
+            // Full imports to avoid conflicts
+            fn from(poll_id: &$struct_name) -> Self {
+                $struct_name::wrap_arc(std::sync::Arc::from($struct_name::peel_ref(poll_id)))
+            }
+        }
+
+        impl $struct_name {
+            fn from_str(s: &str) -> Box<Self> { $struct_name::wrap_box(Box::<str>::from(s)) }
+        }
+
+        impl<'de> serde::de::Deserialize<'de> for Box<$struct_name> {
+            fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+            where
+                D: serde::de::Deserializer<'de>,
+            {
+                struct StringIdVisitor;
+
+                impl<'de> serde::de::Visitor<'de> for StringIdVisitor {
+                    type Value = Box<$struct_name>;
+
+                    fn expecting(&self, formatter: &mut std::fmt::Formatter) -> std::fmt::Result {
+                        formatter.write_str("a string")
+                    }
+
+                    fn visit_str<E: serde::de::Error>(self, v: &str) -> Result<Self::Value, E> {
+                        Ok($struct_name::from_str(v))
+                    }
+                }
+
+                deserializer.deserialize_str(StringIdVisitor {})
+            }
+        }
+
+        impl std::ops::Deref for $struct_name {
+            type Target = str;
+
+            fn deref(&self) -> &Self::Target { &self.0 }
+        }
+    };
+}
+
 #[test]
 // waffle: efficiency is not important here, and I don't want to rewrite this
 #[allow(clippy::format_collect)]

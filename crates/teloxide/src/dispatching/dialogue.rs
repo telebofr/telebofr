@@ -232,8 +232,9 @@ where
         match dialogue.get_or_default().await {
             Ok(dialogue) => Some(dialogue),
             Err(err) => {
-                log::error!("dialogue.get_or_default() failed: {:?}", err);
-                None
+                log::error!("dialogue.get_or_default() failed: {:?}, falling back to default", err);
+                dialogue.update(D::default()).await.ok()?;
+                dialogue.get_or_default().await.ok()
             }
         }
     })

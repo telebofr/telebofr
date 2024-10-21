@@ -52,7 +52,13 @@ where
 
 /// The [Bincode] serializer for memory storages.
 ///
+/// Can't serialize if the length is unknown, [see this issue](https://github.com/bincode-org/bincode/issues/167).
+/// Use [`Cbor`] or [`Json`] if you are storing structs like [`Message`].
+///
 /// [Bincode]: https://github.com/servo/bincode
+/// [`Cbor`]: crate::dispatching::dialogue::serializer::Cbor
+/// [`Json`]: crate::dispatching::dialogue::serializer::Json
+/// [`Message`]: crate::types::Message
 #[cfg(feature = "bincode-serializer")]
 pub struct Bincode;
 

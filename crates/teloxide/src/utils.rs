@@ -1,5 +1,6 @@
 //! Some useful utilities.
 
+pub mod button;
 pub mod command;
 pub mod html;
 pub mod markdown;

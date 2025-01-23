@@ -18,6 +18,8 @@ macro_rules! variants_only_attr {
     };
 }
 
+pub(crate) use variants_only_attr;
+
 pub(crate) struct CommandEnum {
     pub prefix: String,
     /// The bool is true if the description contains a doc comment

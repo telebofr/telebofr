@@ -4,9 +4,10 @@ use crate::{
         DpHandlerDescription,
     },
     types::{Me, Message},
-    utils::command::BotCommands,
+    utils::{button::InlineButtons, command::BotCommands},
 };
 use dptree::{di::DependencyMap, Handler};
+use teloxide_core::types::CallbackQuery;
 
 use std::fmt::Debug;
 
@@ -34,6 +35,16 @@ pub trait HandlerExt<Output> {
     fn filter_mention_command<C>(self) -> Self
     where
         C: BotCommands + Send + Sync + 'static;
+
+    /// Returns a handler that accepts a parsed callback query data `D`.
+    ///
+    /// ## Dependency requirements
+    ///
+    ///  - [`crate::types::CallbackQuery`]
+    #[must_use]
+    fn filter_callback_data<D>(self) -> Self
+    where
+        D: InlineButtons + Send + Sync + 'static;
 
     /// Passes [`Dialogue<D, S>`] and `D` as handler dependencies.
     ///
@@ -80,6 +91,13 @@ where
         self.chain(filter_mention_command::<C, Output>())
     }
 
+    fn filter_callback_data<D>(self) -> Self
+    where
+        D: InlineButtons + Send + Sync + 'static,
+    {
+        self.chain(filter_callback_data::<D, Output>())
+    }
+
     fn enter_dialogue<Upd, S, D>(self) -> Self
     where
         S: Storage<D> + ?Sized + Send + Sync + 'static,
@@ -110,6 +128,28 @@ where
     dptree::filter_map(move |message: Message, me: Me| {
         let bot_name = me.user.username.expect("Bots must have a username");
         message.text().and_then(|text| C::parse(text, &bot_name).ok())
+    })
+}
+
+/// Returns a handler that accepts a parsed callback query data `D`
+///
+/// A call to this function is the same as
+/// `dptree::entry().filter_callback_data()`.
+///
+/// See [`HandlerExt::filter_callback_data`].
+///
+/// ## Dependency requirements
+///
+///  - [`crate::types::CallbackQuery`]
+#[must_use]
+pub fn filter_callback_data<D, Output>(
+) -> Handler<'static, DependencyMap, Output, DpHandlerDescription>
+where
+    D: InlineButtons + Send + Sync + 'static,
+    Output: Send + Sync + 'static,
+{
+    dptree::filter_map(move |callback_query: CallbackQuery| {
+        callback_query.data.and_then(|data| D::parse(data.as_ref()).ok())
     })
 }
 
@@ -151,13 +191,17 @@ where
 #[cfg(test)]
 #[cfg(feature = "macros")]
 mod tests {
-    use crate::{self as teloxide, dispatching::UpdateFilterExt, utils::command::BotCommands};
+    use crate::{
+        self as teloxide,
+        dispatching::UpdateFilterExt,
+        utils::{button::InlineButtons, command::BotCommands},
+    };
     use chrono::DateTime;
     use dptree::deps;
     use teloxide_core::types::{
-        Chat, ChatFullInfo, ChatId, ChatKind, ChatPrivate, LinkPreviewOptions, Me, MediaKind,
-        MediaText, Message, MessageCommon, MessageId, MessageKind, Update, UpdateId, UpdateKind,
-        User, UserId,
+        CallbackQuery, Chat, ChatFullInfo, ChatId, ChatKind, ChatPrivate, LinkPreviewOptions, Me,
+        MediaKind, MediaText, Message, MessageCommon, MessageId, MessageKind, Update, UpdateId,
+        UpdateKind, User, UserId,
     };
 
     use super::HandlerExt;
@@ -168,78 +212,111 @@ mod tests {
         Test,
     }
 
-    fn make_update(text: String) -> Update {
+    #[derive(InlineButtons, Debug, PartialEq)]
+    enum CallbackButtons {
+        Button1,
+        Button2(String),
+        Button3 { field1: u32 },
+    }
+
+    fn make_from() -> User {
+        User {
+            id: UserId(109_998_024),
+            is_bot: false,
+            first_name: String::from("Laster"),
+            last_name: None,
+            username: Some(String::from("laster_alex")),
+            language_code: Some(String::from("en")),
+            is_premium: false,
+            added_to_attachment_menu: false,
+        }
+    }
+
+    fn make_chat() -> Chat {
+        Chat {
+            id: ChatId(109_998_024),
+            kind: ChatKind::Private(ChatPrivate {
+                username: Some(String::from("Laster")),
+                first_name: Some(String::from("laster_alex")),
+                last_name: None,
+                bio: None,
+                has_private_forwards: None,
+                has_restricted_voice_and_video_messages: None,
+                business_intro: None,
+                business_location: None,
+                business_opening_hours: None,
+                birthdate: None,
+                personal_chat: None,
+            }),
+            photo: None,
+            available_reactions: None,
+            pinned_message: None,
+            message_auto_delete_time: None,
+            has_hidden_members: false,
+            has_aggressive_anti_spam_enabled: false,
+            chat_full_info: ChatFullInfo::default(),
+        }
+    }
+
+    fn make_message(text: String) -> Message {
         let timestamp = 1_569_518_829;
         let date = DateTime::from_timestamp(timestamp, 0).unwrap();
+        Message {
+            via_bot: None,
+            id: MessageId(5042),
+            thread_id: None,
+            from: Some(make_from()),
+            sender_chat: None,
+            is_topic_message: false,
+            sender_business_bot: None,
+            date,
+            chat: make_chat(),
+            kind: MessageKind::Common(MessageCommon {
+                reply_to_message: None,
+                forward_origin: None,
+                external_reply: None,
+                quote: None,
+                edit_date: None,
+                media_kind: MediaKind::Text(MediaText {
+                    text,
+                    entities: vec![],
+                    link_preview_options: Some(LinkPreviewOptions {
+                        is_disabled: true,
+                        url: None,
+                        prefer_small_media: false,
+                        prefer_large_media: false,
+                        show_above_text: false,
+                    }),
+                }),
+                reply_markup: None,
+                author_signature: None,
+                is_automatic_forward: false,
+                has_protected_content: false,
+                reply_to_story: None,
+                sender_boost_count: None,
+                is_from_offline: false,
+                business_connection_id: None,
+            }),
+        }
+    }
+
+    fn make_update(text: String) -> Update {
+        Update { id: UpdateId(326_170_274), kind: UpdateKind::Message(make_message(text)) }
+    }
+
+    fn make_callback_query_update(data: String) -> Update {
         Update {
-            id: UpdateId(326_170_274),
-            kind: UpdateKind::Message(Message {
-                via_bot: None,
-                id: MessageId(5042),
-                thread_id: None,
-                from: Some(User {
-                    id: UserId(109_998_024),
-                    is_bot: false,
-                    first_name: String::from("Laster"),
-                    last_name: None,
-                    username: Some(String::from("laster_alex")),
-                    language_code: Some(String::from("en")),
-                    is_premium: false,
-                    added_to_attachment_menu: false,
-                }),
-                sender_chat: None,
-                is_topic_message: false,
-                sender_business_bot: None,
-                date,
-                chat: Chat {
-                    id: ChatId(109_998_024),
-                    kind: ChatKind::Private(ChatPrivate {
-                        username: Some(String::from("Laster")),
-                        first_name: Some(String::from("laster_alex")),
-                        last_name: None,
-                        bio: None,
-                        has_private_forwards: None,
-                        has_restricted_voice_and_video_messages: None,
-                        business_intro: None,
-                        business_location: None,
-                        business_opening_hours: None,
-                        birthdate: None,
-                        personal_chat: None,
-                    }),
-                    photo: None,
-                    available_reactions: None,
-                    pinned_message: None,
-                    message_auto_delete_time: None,
-                    has_hidden_members: false,
-                    has_aggressive_anti_spam_enabled: false,
-                    chat_full_info: ChatFullInfo::default(),
-                },
-                kind: MessageKind::Common(MessageCommon {
-                    reply_to_message: None,
-                    forward_origin: None,
-                    external_reply: None,
-                    quote: None,
-                    edit_date: None,
-                    media_kind: MediaKind::Text(MediaText {
-                        text,
-                        entities: vec![],
-                        link_preview_options: Some(LinkPreviewOptions {
-                            is_disabled: true,
-                            url: None,
-                            prefer_small_media: false,
-                            prefer_large_media: false,
-                            show_above_text: false,
-                        }),
-                    }),
-                    reply_markup: None,
-                    author_signature: None,
-                    is_automatic_forward: false,
-                    has_protected_content: false,
-                    reply_to_story: None,
-                    sender_boost_count: None,
-                    is_from_offline: false,
-                    business_connection_id: None,
-                }),
+            id: UpdateId(326_170_275),
+            kind: UpdateKind::CallbackQuery(CallbackQuery {
+                id: "5024".to_string(),
+                from: make_from(),
+                message: Some(teloxide_core::types::MaybeInaccessibleMessage::Regular(
+                    make_message("text".to_owned()),
+                )),
+                inline_message_id: None,
+                chat_instance: "12345678".to_owned(),
+                data: Some(data),
+                game_short_name: None,
             }),
         }
     }
@@ -298,6 +375,34 @@ mod tests {
 
         let update = make_update("/test".to_owned());
         let result = h.dispatch(deps![update, me.clone()]).await;
+        assert!(result.is_continue());
+    }
+
+    #[tokio::test]
+    async fn test_filter_callback_data() {
+        let h = dptree::entry().branch(
+            Update::filter_callback_query()
+                .filter_callback_data::<CallbackButtons>()
+                .endpoint(|| async {}),
+        );
+
+        let button = CallbackButtons::Button1;
+        let update = make_callback_query_update(button.stringify().unwrap());
+        let result = h.dispatch(deps![update]).await;
+        assert!(result.is_break());
+
+        let button = CallbackButtons::Button2("SomeData".to_owned());
+        let update = make_callback_query_update(button.stringify().unwrap());
+        let result = h.dispatch(deps![update]).await;
+        assert!(result.is_break());
+
+        let button = CallbackButtons::Button3 { field1: 123 };
+        let update = make_callback_query_update(button.stringify().unwrap());
+        let result = h.dispatch(deps![update]).await;
+        assert!(result.is_break());
+
+        let update = make_callback_query_update("wrong_data".to_string());
+        let result = h.dispatch(deps![update]).await;
         assert!(result.is_continue());
     }
 }

@@ -266,6 +266,7 @@ pub trait BotCommands: Sized {
 
 pub type PrefixedBotCommand = String;
 pub type BotName = String;
+pub type CallbackDataVariant = String;
 
 /// Errors returned from [`BotCommands::parse`].
 ///
@@ -290,6 +291,11 @@ pub enum ParseError {
 
     UnknownCommand(PrefixedBotCommand),
     WrongBotName(BotName),
+
+    /// Error for [`InlineButtons`].
+    ///
+    /// [`InlineButtons`]: crate::utils::button::InlineButtons
+    UnknownCallbackDataVariant(CallbackDataVariant),
 
     /// A custom error which you can return from your custom parser.
     Custom(Box<dyn Error + Send + Sync + 'static>),
@@ -472,6 +478,9 @@ impl Display for ParseError {
             ),
             ParseError::IncorrectFormat(e) => write!(f, "Incorrect format of command args: {e}"),
             ParseError::UnknownCommand(e) => write!(f, "Unknown command: {e}"),
+            ParseError::UnknownCallbackDataVariant(v) => {
+                write!(f, "Unknown callback data variant: {v}")
+            }
             ParseError::WrongBotName(n) => write!(f, "Wrong bot name: {n}"),
             ParseError::Custom(e) => write!(f, "{e}"),
         }

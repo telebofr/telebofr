@@ -79,7 +79,8 @@ full = [
 [dependencies]
 # replace me by the actual version when release, and return path when it's time to make 0-day fixes
 teloxide-core = { path = "../../crates/teloxide-core", default-features = false }
-teloxide-macros = { version = "0.8", optional = true }
+# me too
+teloxide-macros = { path = "../../crates/teloxide-macros", optional = true }
 
 serde_json = "1.0"
 serde = { version = "1.0", features = ["derive"] }
@@ -213,6 +214,10 @@ required-features = ["webhooks-axum", "ctrlc_handler"]
 
 [[example]]
 name = "inline"
+required-features = ["macros", "ctrlc_handler"]
+
+[[example]]
+name = "inline_buttons_enum"
 required-features = ["macros", "ctrlc_handler"]
 
 [[example]]

@@ -234,3 +234,7 @@ required-features = ["ctrlc_handler"]
 [[example]]
 name = "throw_dice"
 required-features = ["ctrlc_handler"]
+
+[[example]]
+name = "composite_state"
+required-features = ["macros"]

@@ -91,6 +91,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add `MessageExt::filter_story` method for the corresponding `MediaKind::Story` variant ([PR 1087](https://github.com/teloxide/teloxide/pull/1087)).
 - Add `update_listeners::webhooks::Options::path`, an option to make the webhook server listen on a different path, which can be useful behind a reverse proxy.
 - Add `filter_giveaway`, `filter_giveaway_completed`, `filter_giveaway_created` and `filter_giveaway_winners` filters to `MessageFilterExt` trait ([PR 1101](https://github.com/teloxide/teloxide/pull/1101))
+- Add `teloxide::utils::command::BotCommands` to the `prelude` ([PR 1123](https://github.com/teloxide/teloxide/pull/1123))
 
 ### Fixed
 

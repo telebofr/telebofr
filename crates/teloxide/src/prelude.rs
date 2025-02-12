@@ -8,6 +8,8 @@ pub use crate::dispatching::{
     dialogue::Dialogue, Dispatcher, HandlerExt as _, MessageFilterExt as _, UpdateFilterExt as _,
 };
 
+pub use crate::utils::command::BotCommands;
+
 #[cfg(feature = "ctrlc_handler")]
 pub use crate::repls::CommandReplExt as _;
 

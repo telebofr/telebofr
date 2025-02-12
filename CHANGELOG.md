@@ -43,6 +43,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Now stack does not overflow on dispatch ([issue 1154](https://github.com/teloxide/teloxide/issues/1154))
 - Implement `RequestReplyExt` and `RequestLinkPreviewExt` on setters from `teloxide_core::payloads` so syntax sugar can work on bot adaptors too ([PR 1270](https://github.com/teloxide/teloxide/pull/1270))
 - Now blockquote handling in the render module works correctly ([PR 1267](https://github.com/teloxide/teloxide/pull/1267))
+- Now blockquote generation in the `utils::markdown` module works correctly ([PR 1273](https://github.com/teloxide/teloxide/pull/1273))
 - Fixed calculation of per-second limits in the `Throttle` adaptor ([PR 1212](https://github.com/teloxide/teloxide/pull/1212))
 
 ## 0.13.0 - 2024-08-16

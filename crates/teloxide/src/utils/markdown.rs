@@ -25,7 +25,7 @@ pub fn bold(s: &str) -> String {
 #[must_use = "This function returns a new string, rather than mutating the argument, so calling it \
               without using its output does nothing useful"]
 pub fn blockquote(s: &str) -> String {
-    format!(">{s}")
+    format!("**>{}", s.replace('\n', "\n>"))
 }
 
 /// Applies the italic font style to the string.
@@ -221,6 +221,11 @@ mod tests {
             user_mention(UserId(123_456_789), "pwner666"),
             "[pwner666](tg://user?id=123456789)"
         );
+    }
+
+    #[test]
+    fn test_blockquote() {
+        assert_eq!(blockquote("foobar\n\nfoo\nbar"), "**>foobar\n>\n>foo\n>bar");
     }
 
     #[test]

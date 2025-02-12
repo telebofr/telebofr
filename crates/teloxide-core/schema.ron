@@ -39,7 +39,7 @@
 //! [github]: https://github.com/WaffleLapkin/tg-methods-schema
 
 Schema(
-    api_version: ApiVersion(ver: "7.2", date: "March 31, 2024"),
+    api_version: ApiVersion(ver: "7.3", date: "May 6, 2024"),
     methods: [
         Method(
             names: ("getUpdates", "GetUpdates", "get_updates"),
@@ -1038,7 +1038,7 @@ Schema(
             names: ("sendVoice", "SendVoice", "send_voice"),
             return_ty: RawTy("Message"),
             doc: Doc(
-                md: "Use this method to send audio files, if you want Telegram clients to display the file as a playable voice message. For this to work, your audio must be in an .OGG file encoded with OPUS (other formats may be sent as [Audio] or [Document]). On success, the sent [Message] is returned. Bots can currently send voice messages of up to 50 MB in size, this limit may be changed in the future.",
+                md: "Use this method to send audio files, if you want Telegram clients to display the file as a playable voice message. For this to work, your audio must be in an .OGG file encoded with OPUS, or in .MP3 format, or in .M4A format (other formats may be sent as [Audio] or [Document]). On success, the sent [Message] is returned. Bots can currently send voice messages of up to 50 MB in size, this limit may be changed in the future.",
                 md_links: {
                     "Audio": "https://core.telegram.org/bots/api#audio",
                     "Document": "https://core.telegram.org/bots/api#document",
@@ -1303,9 +1303,9 @@ Schema(
                 ),
                 Param(
                     name: "live_period",
-                    ty: Option(u32),
+                    ty: Option(RawTy("LivePeriod")),
                     descr: Doc(
-                        md: "Period in seconds for which the location will be updated (see [Live Locations], should be between 60 and 86400.",
+                        md: "Period in seconds for which the location will be updated (see [Live Locations], should be between 60 and 86400, or 0x7FFFFFFF for live locations that can be edited indefinitely.",
                         md_links: {"Live Locations": "https://telegram.org/blog/live-locations"}
                     )
                 ),
@@ -1379,6 +1379,11 @@ Schema(
                     name: "longitude",
                     ty: f64,
                     descr: Doc(md: "Longitude of new location"),
+                ),
+                Param(
+                    name: "live_period",
+                    ty: Option(RawTy("LivePeriod")),
+                    descr: Doc(md: "New period in seconds during which the location can be updated, starting from the message send date. If 0x7FFFFFFF is specified, then the location can be updated forever. Otherwise, the new value must not exceed the current live_period by more than a day, and the live location expiration date must remain within the next 90 days. If not specified, then live_period remains unchanged"),
                 ),
                 Param(
                     name: "horizontal_accuracy",
@@ -1738,9 +1743,22 @@ Schema(
                     descr: Doc(md: "Poll question, 1-300 characters"),
                 ),
                 Param(
+                    name: "question_parse_mode",
+                    ty: Option(RawTy("ParseMode")),
+                    descr: Doc(
+                        md: "Mode for parsing entities in the question. See [formatting options] for more details. Currently, only custom emoji entities are allowed",
+                        md_links: {"formatting options": "https://core.telegram.org/bots/api#formatting-options"}
+                    )
+                ),
+                Param(
+                    name: "question_entities",
+                    ty: Option(ArrayOf(RawTy("MessageEntity"))),
+                    descr: Doc(md: "A JSON-serialized list of special entities that appear in the poll question. It can be specified instead of _question\\_parse\\_mode_"),
+                ),
+                Param(
                     name: "options",
-                    ty: ArrayOf(String),
-                    descr: Doc(md: "A JSON-serialized list of answer options, 2-10 strings 1-100 characters each"),
+                    ty: ArrayOf(RawTy("InputPollOption")),
+                    descr: Doc(md: "A JSON-serialized list of 2-10 answer options"),
                 ),
                 Param(
                     name: "is_anonymous",
@@ -2613,10 +2631,10 @@ Schema(
         ),
         Method(
             names: ("getChat", "GetChat", "get_chat"),
-            return_ty: RawTy("Chat"),
+            return_ty: RawTy("ChatFullInfo"),
             doc: Doc(
-                md: "Use this method to get up to date information about the chat (current name of the user for one-on-one conversations, current username of a user, group or channel, etc.). Returns a [Chat] object on success.",
-                md_links: {"Chat": "https://core.telegram.org/bots/api#chat"},
+                md: "Use this method to get up to date information about the chat (current name of the user for one-on-one conversations, current username of a user, group or channel, etc.). Returns a [ChatFullInfo] object on success.",
+                md_links: {"ChatFullInfo": "https://core.telegram.org/bots/api#chatfullinfo"},
             ),
             tg_doc: "https://core.telegram.org/bots/api#getchat",
             tg_category: "Available methods",

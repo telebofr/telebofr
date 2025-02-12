@@ -397,7 +397,7 @@ pub trait Requester {
     where
         C: Into<Recipient>,
         Q: Into<String>,
-        O: IntoIterator<Item = String>;
+        O: IntoIterator<Item = InputPollOption>;
 
     type SendDice: Request<Payload = SendDice, Err = Self::Err>;
 

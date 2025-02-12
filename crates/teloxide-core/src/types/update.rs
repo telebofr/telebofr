@@ -527,11 +527,11 @@ fn empty_error() -> UpdateKind {
 mod test {
     use crate::types::{
         Chat, ChatBoost, ChatBoostRemoved, ChatBoostSource, ChatBoostSourcePremium,
-        ChatBoostUpdated, ChatFullInfo, ChatId, ChatKind, ChatPrivate, ChatPublic,
-        LinkPreviewOptions, MaybeAnonymousUser, MediaKind, MediaText, Message, MessageCommon,
-        MessageId, MessageKind, MessageReactionCountUpdated, MessageReactionUpdated,
-        PublicChatChannel, PublicChatKind, PublicChatSupergroup, ReactionCount, ReactionType,
-        Update, UpdateId, UpdateKind, User, UserId,
+        ChatBoostUpdated, ChatId, ChatKind, ChatPrivate, ChatPublic, LinkPreviewOptions,
+        MaybeAnonymousUser, MediaKind, MediaText, Message, MessageCommon, MessageId, MessageKind,
+        MessageReactionCountUpdated, MessageReactionUpdated, PublicChatChannel, PublicChatKind,
+        PublicChatSupergroup, ReactionCount, ReactionType, Update, UpdateId, UpdateKind, User,
+        UserId,
     };
 
     use chrono::DateTime;
@@ -591,22 +591,7 @@ mod test {
                         username: Some(String::from("WaffleLapkin")),
                         first_name: Some(String::from("Waffle")),
                         last_name: None,
-                        bio: None,
-                        has_private_forwards: None,
-                        has_restricted_voice_and_video_messages: None,
-                        personal_chat: None,
-                        birthdate: None,
-                        business_intro: None,
-                        business_location: None,
-                        business_opening_hours: None,
                     }),
-                    photo: None,
-                    available_reactions: None,
-                    pinned_message: None,
-                    message_auto_delete_time: None,
-                    has_hidden_members: false,
-                    has_aggressive_anti_spam_enabled: false,
-                    chat_full_info: ChatFullInfo::default(),
                 },
                 sender_business_bot: None,
                 kind: MessageKind::Common(MessageCommon {
@@ -930,34 +915,13 @@ mod test {
             kind: UpdateKind::MessageReaction(MessageReactionUpdated {
                 chat: Chat {
                     id: ChatId(-1002184233434),
-                    kind: ChatKind::Public(Box::new(ChatPublic {
+                    kind: ChatKind::Public(ChatPublic {
                         title: Some("Test".to_owned()),
                         kind: PublicChatKind::Supergroup(PublicChatSupergroup {
                             username: None,
-                            active_usernames: None,
                             is_forum: false,
-                            sticker_set_name: None,
-                            can_set_sticker_set: None,
-                            custom_emoji_sticker_set_name: None,
-                            permissions: None,
-                            slow_mode_delay: None,
-                            unrestrict_boost_count: None,
-                            linked_chat_id: None,
-                            location: None,
-                            join_to_send_messages: None,
-                            join_by_request: None,
                         }),
-                        description: None,
-                        invite_link: None,
-                        has_protected_content: None,
-                    })),
-                    photo: None,
-                    available_reactions: None,
-                    pinned_message: None,
-                    message_auto_delete_time: None,
-                    has_hidden_members: false,
-                    has_aggressive_anti_spam_enabled: false,
-                    chat_full_info: ChatFullInfo::default(),
+                    }),
                 },
                 message_id: MessageId(35),
                 actor: MaybeAnonymousUser::User(User {
@@ -1007,34 +971,13 @@ mod test {
         "#;
         let chat = Chat {
             id: ChatId(-1002199793788),
-            kind: ChatKind::Public(Box::new(ChatPublic {
+            kind: ChatKind::Public(ChatPublic {
                 title: Some("тест".to_owned()),
                 kind: PublicChatKind::Supergroup(PublicChatSupergroup {
                     username: None,
-                    active_usernames: None,
                     is_forum: false,
-                    sticker_set_name: None,
-                    can_set_sticker_set: None,
-                    permissions: None,
-                    slow_mode_delay: None,
-                    linked_chat_id: None,
-                    location: None,
-                    join_to_send_messages: None,
-                    join_by_request: None,
-                    custom_emoji_sticker_set_name: None,
-                    unrestrict_boost_count: None,
                 }),
-                description: None,
-                invite_link: None,
-                has_protected_content: None,
-            })),
-            photo: None,
-            available_reactions: None,
-            pinned_message: None,
-            message_auto_delete_time: None,
-            has_hidden_members: false,
-            has_aggressive_anti_spam_enabled: false,
-            chat_full_info: ChatFullInfo::default(),
+            }),
         };
         let expected = Update {
             id: UpdateId(767844136),
@@ -1090,23 +1033,10 @@ mod test {
             kind: UpdateKind::MessageReactionCount(MessageReactionCountUpdated {
                 chat: Chat {
                     id: ChatId(-1002236736395),
-                    kind: ChatKind::Public(Box::new(ChatPublic {
+                    kind: ChatKind::Public(ChatPublic {
                         title: Some("Test".to_owned()),
-                        kind: PublicChatKind::Channel(PublicChatChannel {
-                            username: None,
-                            linked_chat_id: None,
-                        }),
-                        description: None,
-                        invite_link: None,
-                        has_protected_content: None,
-                    })),
-                    photo: None,
-                    available_reactions: None,
-                    pinned_message: None,
-                    message_auto_delete_time: None,
-                    has_hidden_members: false,
-                    has_aggressive_anti_spam_enabled: false,
-                    chat_full_info: ChatFullInfo::default(),
+                        kind: PublicChatKind::Channel(PublicChatChannel { username: None }),
+                    }),
                 },
                 message_id: MessageId(36),
                 date: DateTime::from_timestamp(1721306391, 0).unwrap(),
@@ -1163,23 +1093,10 @@ mod test {
             kind: UpdateKind::ChatBoost(ChatBoostUpdated {
                 chat: Chat {
                     id: ChatId(-1002236736395),
-                    kind: ChatKind::Public(Box::new(ChatPublic {
+                    kind: ChatKind::Public(ChatPublic {
                         title: Some("Test".to_owned()),
-                        kind: PublicChatKind::Channel(PublicChatChannel {
-                            username: None,
-                            linked_chat_id: None,
-                        }),
-                        description: None,
-                        invite_link: None,
-                        has_protected_content: None,
-                    })),
-                    photo: None,
-                    available_reactions: None,
-                    pinned_message: None,
-                    message_auto_delete_time: None,
-                    has_hidden_members: false,
-                    has_aggressive_anti_spam_enabled: false,
-                    chat_full_info: ChatFullInfo::default(),
+                        kind: PublicChatKind::Channel(PublicChatChannel { username: None }),
+                    }),
                 },
                 boost: ChatBoost {
                     boost_id: "4506e1b7e866e33fcbde78fe1746ec3a".to_owned(),
@@ -1238,23 +1155,10 @@ mod test {
             kind: UpdateKind::RemovedChatBoost(ChatBoostRemoved {
                 chat: Chat {
                     id: ChatId(-1002236736395),
-                    kind: ChatKind::Public(Box::new(ChatPublic {
+                    kind: ChatKind::Public(ChatPublic {
                         title: Some("Test".to_owned()),
-                        kind: PublicChatKind::Channel(PublicChatChannel {
-                            username: None,
-                            linked_chat_id: None,
-                        }),
-                        description: None,
-                        invite_link: None,
-                        has_protected_content: None,
-                    })),
-                    photo: None,
-                    available_reactions: None,
-                    pinned_message: None,
-                    message_auto_delete_time: None,
-                    has_hidden_members: false,
-                    has_aggressive_anti_spam_enabled: false,
-                    chat_full_info: ChatFullInfo::default(),
+                        kind: PublicChatKind::Channel(PublicChatChannel { username: None }),
+                    }),
                 },
                 boost_id: "4506e1b7e866e33fcbde78fe1746ec3a".to_owned(),
                 remove_date: DateTime::from_timestamp(1721999621, 0).unwrap(),

@@ -11,7 +11,7 @@
     <img src="https://img.shields.io/crates/v/teloxide.svg">
   </a>
   <a href="https://core.telegram.org/bots/api">
-    <img src="https://img.shields.io/badge/API%20coverage-Up%20to%207.2%20(inclusively)-green.svg">
+    <img src="https://img.shields.io/badge/API%20coverage-Up%20to%207.3%20(inclusively)-green.svg">
   </a>
   <a href="https://t.me/teloxide">
     <img src="https://img.shields.io/badge/support-t.me%2Fteloxide-blueviolet">

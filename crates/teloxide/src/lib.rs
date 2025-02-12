@@ -1,6 +1,6 @@
 //! A full-featured framework that empowers you to easily build [Telegram bots]
 //! using [Rust]. It handles all the difficult stuff so you can focus only on
-//! your business logic. Currently, version `7.2` of [Telegram Bot API] is
+//! your business logic. Currently, version `7.3` of [Telegram Bot API] is
 //! supported.
 //!
 //! For a high-level overview, see [our GitHub repository](https://github.com/teloxide/teloxide).

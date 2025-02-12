@@ -1,9 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use crate::types::{
-    Birthdate, BusinessIntro, BusinessLocation, BusinessOpeningHours, ChatFullInfo, ChatId,
-    ChatLocation, ChatPermissions, ChatPhoto, Message, ReactionType, Seconds, True, User,
-};
+use crate::types::ChatId;
 
 /// This object represents a chat.
 ///
@@ -16,54 +13,13 @@ pub struct Chat {
 
     #[serde(flatten)]
     pub kind: ChatKind,
-
-    /// A chat photo. Returned only in [`GetChat`].
-    ///
-    /// [`GetChat`]: crate::payloads::GetChat
-    pub photo: Option<ChatPhoto>,
-
-    /// List of available reactions allowed in the chat. If omitted, then all
-    /// emoji reactions are allowed. Returned only from [`GetChat`].
-    ///
-    /// [`GetChat`]: crate::payloads::GetChat
-    pub available_reactions: Option<Vec<ReactionType>>,
-
-    /// The most recent pinned message (by sending date). Returned only in
-    /// [`GetChat`].
-    ///
-    /// [`GetChat`]: crate::payloads::GetChat
-    pub pinned_message: Option<Box<Message>>,
-
-    /// The time after which all messages sent to the chat will be automatically
-    /// deleted; in seconds. Returned only in [`GetChat`].
-    ///
-    /// [`GetChat`]: crate::payloads::GetChat
-    pub message_auto_delete_time: Option<Seconds>,
-
-    /// `true`, if non-administrators can only get the list of bots and
-    /// administrators in the chat. Returned only in [`GetChat`].
-    ///
-    /// [`GetChat`]: crate::payloads::GetChat
-    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
-    pub has_hidden_members: bool,
-
-    /// `true`, if aggressive anti-spam checks are enabled in the supergroup.
-    /// The field is only available to chat administrators. Returned only in
-    /// [`GetChat`].
-    ///
-    /// [`GetChat`]: crate::payloads::GetChat
-    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
-    pub has_aggressive_anti_spam_enabled: bool,
-
-    #[serde(flatten)]
-    pub chat_full_info: ChatFullInfo,
 }
 
 #[serde_with::skip_serializing_none]
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum ChatKind {
-    Public(Box<ChatPublic>),
+    Public(ChatPublic),
     Private(ChatPrivate),
 }
 
@@ -75,30 +31,6 @@ pub struct ChatPublic {
 
     #[serde(flatten)]
     pub kind: PublicChatKind,
-
-    /// A description, for groups, supergroups and channel chats. Returned
-    /// only in [`GetChat`].
-    ///
-    /// [`GetChat`]: crate::payloads::GetChat
-    pub description: Option<String>,
-
-    /// A chat invite link, for groups, supergroups and channel chats. Each
-    /// administrator in a chat generates their own invite links, so the
-    /// bot must first generate the link using
-    /// [`ExportChatInviteLink`]. Returned only in
-    /// [`GetChat`].
-    ///
-    /// [`ExportChatInviteLink`]:
-    /// crate::payloads::ExportChatInviteLink
-    ///
-    /// [`GetChat`]: crate::payloads::GetChat
-    pub invite_link: Option<String>,
-
-    /// `True`, if messages from the chat can't be forwarded to other chats.
-    /// Returned only in [`GetChat`].
-    ///
-    /// [`GetChat`]: crate::payloads::GetChat
-    pub has_protected_content: Option<True>,
 }
 
 #[serde_with::skip_serializing_none]
@@ -114,55 +46,6 @@ pub struct ChatPrivate {
 
     /// A last name of the other party in a private chat.
     pub last_name: Option<String>,
-
-    /// Bio of the other party in a private chat. Returned only in [`GetChat`].
-    ///
-    /// [`GetChat`]: crate::payloads::GetChat
-    pub bio: Option<String>,
-
-    /// `True`, if privacy settings of the other party in the private chat
-    /// allows to use `tg://user?id=<user_id>` links only in chats with the
-    /// user. Returned only in [`GetChat`].
-    ///
-    /// [`GetChat`]: crate::payloads::GetChat
-    pub has_private_forwards: Option<True>,
-
-    /// `True`, if the privacy settings of the other party restrict sending
-    /// voice and video note messages in the private chat. Returned only in
-    /// [`GetChat`].
-    ///
-    /// [`GetChat`]: crate::payloads::GetChat
-    pub has_restricted_voice_and_video_messages: Option<True>,
-
-    /// For private chats, the personal channel of the user. Returned only in
-    /// [`GetChat`].
-    ///
-    /// [`GetChat`]: crate::payloads::GetChat
-    pub personal_chat: Option<Box<Chat>>,
-
-    /// For private chats, the date of birth of the user. Returned only in
-    /// [`GetChat`].
-    ///
-    /// [`GetChat`]: crate::payloads::GetChat
-    pub birthdate: Option<Birthdate>,
-
-    /// For private chats with business accounts, the intro of the business.
-    /// Returned only in [`GetChat`].
-    ///
-    /// [`GetChat`]: crate::payloads::GetChat
-    pub business_intro: Option<BusinessIntro>,
-
-    /// For private chats with business accounts, the location of the business.
-    /// Returned only in [`GetChat`].
-    ///
-    /// [`GetChat`]: crate::payloads::GetChat
-    pub business_location: Option<BusinessLocation>,
-
-    /// For private chats with business accounts, the opening hours of the
-    /// business. Returned only in [`GetChat`].
-    ///
-    /// [`GetChat`]: crate::payloads::GetChat
-    pub business_opening_hours: Option<BusinessOpeningHours>,
 }
 
 #[serde_with::skip_serializing_none]
@@ -171,7 +54,7 @@ pub struct ChatPrivate {
 #[serde(tag = "type")]
 pub enum PublicChatKind {
     Channel(PublicChatChannel),
-    Group(PublicChatGroup),
+    Group,
     Supergroup(PublicChatSupergroup),
 }
 
@@ -180,22 +63,6 @@ pub enum PublicChatKind {
 pub struct PublicChatChannel {
     /// A username, for private chats, supergroups and channels if available.
     pub username: Option<String>,
-
-    /// Unique identifier for the linked chat, i.e. the discussion group
-    /// identifier for a channel and vice versa. Returned only in [`GetChat`].
-    ///
-    /// [`GetChat`]: crate::payloads::GetChat
-    pub linked_chat_id: Option<i64>,
-}
-
-#[serde_with::skip_serializing_none]
-#[derive(Clone, Debug, Eq, Hash, PartialEq, Serialize, Deserialize)]
-pub struct PublicChatGroup {
-    /// A default chat member permissions, for groups and supergroups. Returned
-    /// only from [`GetChat`].
-    ///
-    /// [`GetChat`]: crate::payloads::GetChat
-    pub permissions: Option<ChatPermissions>,
 }
 
 #[serde_with::skip_serializing_none]
@@ -205,77 +72,9 @@ pub struct PublicChatSupergroup {
     /// available.
     pub username: Option<String>,
 
-    /// If non-empty, the list of all active chat usernames; for private chats,
-    /// supergroups and channels. Returned only from [`GetChat`].
-    ///
-    /// [`GetChat`]: crate::payloads::GetChat
-    pub active_usernames: Option<Vec<String>>,
-
     /// `true`, if the supergroup chat is a forum (has topics enabled).
     #[serde(default)]
     pub is_forum: bool,
-
-    /// For supergroups, name of group sticker set. Returned only from
-    /// [`GetChat`].
-    ///
-    /// [`GetChat`]: crate::payloads::GetChat
-    pub sticker_set_name: Option<String>,
-
-    /// `true`, if the bot can change the group sticker set. Returned only
-    /// from [`GetChat`].
-    ///
-    /// [`GetChat`]: crate::payloads::GetChat
-    pub can_set_sticker_set: Option<bool>,
-
-    /// For supergroups, the name of the group's custom emoji sticker set.
-    /// Custom emoji from this set can be used by all users and bots in the
-    /// group. Returned only from [`GetChat`].
-    ///
-    /// [`GetChat`]: crate::payloads::GetChat
-    pub custom_emoji_sticker_set_name: Option<String>,
-
-    /// A default chat member permissions, for groups and supergroups.
-    /// Returned only from [`GetChat`].
-    ///
-    /// [`GetChat`]: crate::payloads::GetChat
-    pub permissions: Option<ChatPermissions>,
-
-    /// The minimum allowed delay between consecutive messages sent by each
-    /// unpriviledged user. Returned only from [`GetChat`].
-    ///
-    /// [`GetChat`]: crate::payloads::GetChat
-    pub slow_mode_delay: Option<Seconds>,
-
-    /// For supergroups, the minimum number of boosts that a non-administrator
-    /// user needs to add in order to ignore slow mode and chat permissions.
-    /// Returned only from [`GetChat`].
-    ///
-    /// [`GetChat`]: crate::payloads::GetChat
-    pub unrestrict_boost_count: Option<u16>,
-
-    /// Unique identifier for the linked chat, i.e. the discussion group
-    /// identifier for a channel and vice versa. Returned only in [`GetChat`].
-    ///
-    /// [`GetChat`]: crate::payloads::GetChat
-    pub linked_chat_id: Option<i64>,
-
-    /// The location to which the supergroup is connected. Returned only in
-    /// [`GetChat`].
-    ///
-    /// [`GetChat`]: crate::payloads::GetChat
-    pub location: Option<ChatLocation>,
-
-    /// True, if users need to join the supergroup before they can send
-    /// messages. Returned only in [`GetChat`].
-    ///
-    /// [`GetChat`]: crate::payloads::GetChat
-    pub join_to_send_messages: Option<True>,
-
-    /// True, if all users directly joining the supergroup need to be approved
-    /// by supergroup administrators. Returned only in [`GetChat`].
-    ///
-    /// [`GetChat`]: crate::payloads::GetChat
-    pub join_by_request: Option<True>,
 }
 
 impl Chat {
@@ -287,7 +86,7 @@ impl Chat {
     #[must_use]
     pub fn is_group(&self) -> bool {
         if let ChatKind::Public(chat_pub) = &self.kind {
-            matches!(**chat_pub, ChatPublic { kind: PublicChatKind::Group(_), .. })
+            matches!(*chat_pub, ChatPublic { kind: PublicChatKind::Group, .. })
         } else {
             false
         }
@@ -296,7 +95,7 @@ impl Chat {
     #[must_use]
     pub fn is_supergroup(&self) -> bool {
         if let ChatKind::Public(chat_pub) = &self.kind {
-            matches!(**chat_pub, ChatPublic { kind: PublicChatKind::Supergroup(_), .. })
+            matches!(*chat_pub, ChatPublic { kind: PublicChatKind::Supergroup(_), .. })
         } else {
             false
         }
@@ -305,7 +104,7 @@ impl Chat {
     #[must_use]
     pub fn is_channel(&self) -> bool {
         if let ChatKind::Public(chat_pub) = &self.kind {
-            matches!(**chat_pub, ChatPublic { kind: PublicChatKind::Channel(_), .. })
+            matches!(*chat_pub, ChatPublic { kind: PublicChatKind::Channel(_), .. })
         } else {
             false
         }
@@ -337,207 +136,9 @@ impl Chat {
                 | PublicChatKind::Supergroup(PublicChatSupergroup { username, .. }) => {
                     username.as_deref()
                 }
-                PublicChatKind::Group(_) => None,
+                PublicChatKind::Group => None,
             },
             ChatKind::Private(this) => this.username.as_deref(),
-        }
-    }
-
-    /// Unique identifier for the linked chat, i.e. the discussion group
-    /// identifier for a channel and vice versa. Returned only in [`GetChat`].
-    ///
-    /// [`GetChat`]: crate::payloads::GetChat
-    #[must_use]
-    pub fn linked_chat_id(&self) -> Option<i64> {
-        match &self.kind {
-            ChatKind::Public(this) => match &this.kind {
-                PublicChatKind::Channel(PublicChatChannel { linked_chat_id, .. })
-                | PublicChatKind::Supergroup(PublicChatSupergroup { linked_chat_id, .. }) => {
-                    *linked_chat_id
-                }
-                PublicChatKind::Group(_) => None,
-            },
-            _ => None,
-        }
-    }
-
-    /// A default chat member permissions, for groups and supergroups. Returned
-    /// only from [`GetChat`].
-    ///
-    /// [`GetChat`]: crate::payloads::GetChat
-    #[must_use]
-    pub fn permissions(&self) -> Option<ChatPermissions> {
-        if let ChatKind::Public(this) = &self.kind {
-            if let PublicChatKind::Group(PublicChatGroup { permissions })
-            | PublicChatKind::Supergroup(PublicChatSupergroup { permissions, .. }) = &this.kind
-            {
-                return permissions.clone();
-            }
-        }
-
-        None
-    }
-
-    /// For supergroups, name of group sticker set. Returned only from
-    /// [`GetChat`].
-    ///
-    /// [`GetChat`]: crate::payloads::GetChat
-    #[must_use]
-    pub fn sticker_set_name(&self) -> Option<&str> {
-        if let ChatKind::Public(this) = &self.kind {
-            if let PublicChatKind::Supergroup(this) = &this.kind {
-                return this.sticker_set_name.as_deref();
-            }
-        }
-
-        None
-    }
-
-    /// `true`, if the bot can change the group sticker set. Returned only
-    /// from [`GetChat`].
-    ///
-    /// [`GetChat`]: crate::payloads::GetChat
-    #[must_use]
-    pub fn can_set_sticker_set(&self) -> Option<bool> {
-        if let ChatKind::Public(this) = &self.kind {
-            if let PublicChatKind::Supergroup(this) = &this.kind {
-                return this.can_set_sticker_set;
-            }
-        }
-
-        None
-    }
-
-    /// For supergroups, the name of the group's custom emoji sticker set.
-    /// Custom emoji from this set can be used by all users and bots in the
-    /// group. Returned only from [`GetChat`].
-    ///
-    /// [`GetChat`]: crate::payloads::GetChat
-    #[must_use]
-    pub fn custom_emoji_sticker_set_name(&self) -> Option<&str> {
-        if let ChatKind::Public(this) = &self.kind {
-            if let PublicChatKind::Supergroup(this) = &this.kind {
-                return this.custom_emoji_sticker_set_name.as_deref();
-            }
-        }
-
-        None
-    }
-
-    /// The minimum allowed delay between consecutive messages sent by each
-    /// unpriviledged user. Returned only from [`GetChat`].
-    ///
-    /// [`GetChat`]: crate::payloads::GetChat
-    #[must_use]
-    pub fn slow_mode_delay(&self) -> Option<Seconds> {
-        if let ChatKind::Public(this) = &self.kind {
-            if let PublicChatKind::Supergroup(this) = &this.kind {
-                return this.slow_mode_delay;
-            }
-        }
-
-        None
-    }
-
-    /// Unique identifier for the linked chat, i.e. the discussion group
-    /// identifier for a channel and vice versa. Returned only in [`GetChat`].
-    ///
-    /// [`GetChat`]: crate::payloads::GetChat
-    #[must_use]
-    pub fn unrestrict_boost_count(&self) -> Option<u16> {
-        if let ChatKind::Public(this) = &self.kind {
-            if let PublicChatKind::Supergroup(this) = &this.kind {
-                return this.unrestrict_boost_count;
-            }
-        }
-
-        None
-    }
-
-    /// The location to which the supergroup is connected. Returned only in
-    /// [`GetChat`].
-    ///
-    /// [`GetChat`]: crate::payloads::GetChat
-    #[must_use]
-    pub fn location(&self) -> Option<&ChatLocation> {
-        if let ChatKind::Public(this) = &self.kind {
-            if let PublicChatKind::Supergroup(this) = &this.kind {
-                return this.location.as_ref();
-            }
-        }
-
-        None
-    }
-
-    /// True, if users need to join the supergroup before they can send
-    /// messages. Returned only in [`GetChat`].
-    ///
-    /// [`GetChat`]: crate::payloads::GetChat
-    #[must_use]
-    pub fn join_to_send_messages(&self) -> Option<True> {
-        if let ChatKind::Public(this) = &self.kind {
-            if let PublicChatKind::Supergroup(this) = &this.kind {
-                return this.join_to_send_messages;
-            }
-        }
-
-        None
-    }
-
-    /// True, if all users directly joining the supergroup need to be approved
-    /// by supergroup administrators. Returned only in [`GetChat`].
-    ///
-    /// [`GetChat`]: crate::payloads::GetChat
-    #[must_use]
-    pub fn join_by_request(&self) -> Option<True> {
-        if let ChatKind::Public(this) = &self.kind {
-            if let PublicChatKind::Supergroup(this) = &this.kind {
-                return this.join_by_request;
-            }
-        }
-
-        None
-    }
-
-    /// A description, for groups, supergroups and channel chats. Returned
-    /// only in [`GetChat`].
-    ///
-    /// [`GetChat`]: crate::payloads::GetChat
-    #[must_use]
-    pub fn description(&self) -> Option<&str> {
-        match &self.kind {
-            ChatKind::Public(this) => this.description.as_deref(),
-            _ => None,
-        }
-    }
-
-    /// A chat invite link, for groups, supergroups and channel chats. Each
-    /// administrator in a chat generates their own invite links, so the
-    /// bot must first generate the link using
-    /// [`ExportChatInviteLink`]. Returned only in
-    /// [`GetChat`].
-    ///
-    /// [`ExportChatInviteLink`]:
-    /// crate::payloads::ExportChatInviteLink
-    ///
-    /// [`GetChat`]: crate::payloads::GetChat
-    #[must_use]
-    pub fn invite_link(&self) -> Option<&str> {
-        match &self.kind {
-            ChatKind::Public(this) => this.invite_link.as_deref(),
-            _ => None,
-        }
-    }
-
-    /// `True`, if messages from the chat can't be forwarded to other chats.
-    /// Returned only in [`GetChat`].
-    ///
-    /// [`GetChat`]: crate::payloads::GetChat
-    #[must_use]
-    pub fn has_protected_content(&self) -> Option<True> {
-        match &self.kind {
-            ChatKind::Public(this) => this.has_protected_content,
-            _ => None,
         }
     }
 
@@ -558,51 +159,9 @@ impl Chat {
             _ => None,
         }
     }
-
-    /// Bio of the other party in a private chat. Returned only in [`GetChat`].
-    ///
-    /// [`GetChat`]: crate::payloads::GetChat
-    #[must_use]
-    pub fn bio(&self) -> Option<&str> {
-        match &self.kind {
-            ChatKind::Private(this) => this.bio.as_deref(),
-            _ => None,
-        }
-    }
-
-    /// `True`, if privacy settings of the other party in the private chat
-    /// allows to use tg://user?id=<user_id> links only in chats with the
-    /// user. Returned only in [`GetChat`].
-    ///
-    /// [`GetChat`]: crate::payloads::GetChat
-    #[must_use]
-    pub fn has_private_forwards(&self) -> Option<True> {
-        match &self.kind {
-            ChatKind::Private(this) => this.has_private_forwards,
-            _ => None,
-        }
-    }
-
-    /// Returns all users that are "contained" in this `Chat`
-    /// structure.
-    ///
-    /// This might be useful to track information about users.
-    ///
-    /// Note that this function can return duplicate users.
-    pub fn mentioned_users(&self) -> impl Iterator<Item = &User> {
-        crate::util::flatten(self.pinned_message.as_ref().map(|m| m.mentioned_users()))
-    }
-
-    /// `{Message, Chat}::mentioned_users` are mutually recursive, as such we
-    /// can't use `->impl Iterator` everywhere, as it would make an infinite
-    /// type. So we need to box somewhere.
-    pub(crate) fn mentioned_users_rec(&self) -> impl Iterator<Item = &User> {
-        crate::util::flatten(self.pinned_message.as_ref().map(|m| m.mentioned_users_rec()))
-    }
 }
 
 mod serde_helper {
-    use crate::types::{Birthdate, BusinessIntro, BusinessLocation, BusinessOpeningHours, True};
     use serde::{Deserialize, Serialize};
 
     #[derive(Serialize, Deserialize)]
@@ -620,79 +179,19 @@ mod serde_helper {
         username: Option<String>,
         first_name: Option<String>,
         last_name: Option<String>,
-        bio: Option<String>,
-        has_private_forwards: Option<True>,
-        has_restricted_voice_and_video_messages: Option<True>,
-        personal_chat: Option<Box<super::Chat>>,
-        birthdate: Option<Birthdate>,
-        business_intro: Option<BusinessIntro>,
-        business_location: Option<BusinessLocation>,
-        business_opening_hours: Option<BusinessOpeningHours>,
     }
 
     impl From<ChatPrivate> for super::ChatPrivate {
-        fn from(
-            ChatPrivate {
-                r#type: _,
-                username,
-                first_name,
-                last_name,
-                bio,
-                has_private_forwards,
-                has_restricted_voice_and_video_messages,
-                personal_chat,
-                birthdate,
-                business_intro,
-                business_location,
-                business_opening_hours,
-            }: ChatPrivate,
-        ) -> Self {
-            Self {
-                username,
-                first_name,
-                last_name,
-                bio,
-                has_private_forwards,
-                has_restricted_voice_and_video_messages,
-                personal_chat,
-                birthdate,
-                business_intro,
-                business_location,
-                business_opening_hours,
-            }
+        fn from(ChatPrivate { r#type: _, username, first_name, last_name }: ChatPrivate) -> Self {
+            Self { username, first_name, last_name }
         }
     }
 
     impl From<super::ChatPrivate> for ChatPrivate {
         fn from(
-            super::ChatPrivate {
-                username,
-                first_name,
-                last_name,
-                bio,
-                has_private_forwards,
-                has_restricted_voice_and_video_messages,
-                personal_chat,
-                birthdate,
-                business_intro,
-                business_location,
-                business_opening_hours,
-            }: super::ChatPrivate,
+            super::ChatPrivate { username, first_name, last_name }: super::ChatPrivate,
         ) -> Self {
-            Self {
-                r#type: Type::private,
-                username,
-                first_name,
-                last_name,
-                bio,
-                has_private_forwards,
-                has_restricted_voice_and_video_messages,
-                personal_chat,
-                birthdate,
-                business_intro,
-                business_location,
-                business_opening_hours,
-            }
+            Self { r#type: Type::private, username, first_name, last_name }
         }
     }
 }
@@ -707,35 +206,18 @@ mod tests {
     fn channel_de() {
         let expected = Chat {
             id: ChatId(-1),
-            kind: ChatKind::Public(Box::new(ChatPublic {
+            kind: ChatKind::Public(ChatPublic {
                 title: None,
                 kind: PublicChatKind::Channel(PublicChatChannel {
                     username: Some("channel_name".into()),
-                    linked_chat_id: None,
                 }),
-                description: None,
-                invite_link: None,
-                has_protected_content: None,
-            })),
-            photo: None,
-            available_reactions: Some(vec![ReactionType::Emoji { emoji: "🌭".to_owned() }]),
-            pinned_message: None,
-            message_auto_delete_time: None,
-            has_hidden_members: false,
-            has_aggressive_anti_spam_enabled: false,
-            chat_full_info: ChatFullInfo::default(),
+            }),
         };
         let actual = from_str(
             r#"{
                 "id": -1,
                 "type": "channel",
-                "username": "channel_name",
-                "available_reactions": [
-                    {
-                        "type": "emoji",
-                        "emoji": "🌭"
-                    }
-                ]
+                "username": "channel_name"
             }"#,
         )
         .unwrap();
@@ -751,35 +233,14 @@ mod tests {
                     username: Some("username".into()),
                     first_name: Some("Anon".into()),
                     last_name: None,
-                    bio: None,
-                    has_private_forwards: None,
-                    has_restricted_voice_and_video_messages: None,
-                    personal_chat: None,
-                    birthdate: None,
-                    business_intro: None,
-                    business_location: None,
-                    business_opening_hours: None,
                 }),
-                photo: None,
-                available_reactions: Some(vec![ReactionType::Emoji { emoji: "🌭".to_owned() }]),
-                pinned_message: None,
-                message_auto_delete_time: None,
-                has_hidden_members: false,
-                has_aggressive_anti_spam_enabled: false,
-                chat_full_info: ChatFullInfo::default()
             },
             from_str(
                 r#"{
                     "id": 0,
                     "type": "private",
                     "username": "username",
-                    "first_name": "Anon",
-                    "available_reactions": [
-                        {
-                            "type": "emoji",
-                            "emoji": "🌭"
-                        }
-                    ]
+                    "first_name": "Anon"
                 }"#
             )
             .unwrap()
@@ -794,22 +255,7 @@ mod tests {
                 username: Some("username".into()),
                 first_name: Some("Anon".into()),
                 last_name: None,
-                bio: None,
-                has_private_forwards: None,
-                has_restricted_voice_and_video_messages: None,
-                personal_chat: None,
-                birthdate: None,
-                business_intro: None,
-                business_location: None,
-                business_opening_hours: None,
             }),
-            photo: None,
-            available_reactions: None,
-            pinned_message: None,
-            message_auto_delete_time: None,
-            has_hidden_members: false,
-            has_aggressive_anti_spam_enabled: false,
-            chat_full_info: ChatFullInfo::default(),
         };
 
         let json = to_string(&chat).unwrap();

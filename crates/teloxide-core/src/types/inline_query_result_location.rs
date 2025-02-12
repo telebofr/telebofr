@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use crate::types::{InlineKeyboardMarkup, InputMessageContent};
+use crate::types::{InlineKeyboardMarkup, InputMessageContent, LivePeriod};
 
 /// Represents a location on a map.
 ///
@@ -28,8 +28,9 @@ pub struct InlineQueryResultLocation {
     pub horizontal_accuracy: Option<f64>,
 
     /// Period in seconds for which the location can be updated, should be
-    /// between 60 and 86400.
-    pub live_period: Option<u32>,
+    /// between 60 and 86400, or 0x7FFFFFFF for live locations that can be
+    /// edited indefinitely.
+    pub live_period: Option<LivePeriod>,
 
     /// For live locations, a direction in which the user is moving, in degrees.
     /// Must be between 1 and 360 if specified.
@@ -116,7 +117,7 @@ impl InlineQueryResultLocation {
     }
 
     #[must_use]
-    pub fn live_period(mut self, val: u32) -> Self {
+    pub fn live_period(mut self, val: LivePeriod) -> Self {
         self.live_period = Some(val);
         self
     }

@@ -3,7 +3,7 @@
 use serde::Serialize;
 
 use crate::types::{
-    BusinessConnectionId, Message, Recipient, ReplyMarkup, ReplyParameters, ThreadId,
+    BusinessConnectionId, LivePeriod, Message, Recipient, ReplyMarkup, ReplyParameters, ThreadId,
 };
 
 impl_payload! {
@@ -27,10 +27,10 @@ impl_payload! {
             pub message_thread_id: ThreadId,
             /// The radius of uncertainty for the location, measured in meters; 0-1500
             pub horizontal_accuracy: f64,
-            /// Period in seconds for which the location will be updated (see [Live Locations], should be between 60 and 86400.
+            /// Period in seconds for which the location will be updated (see [Live Locations], should be between 60 and 86400, or 0x7FFFFFFF for live locations that can be edited indefinitely.
             ///
             /// [Live Locations]: https://telegram.org/blog/live-locations
-            pub live_period: u32,
+            pub live_period: LivePeriod,
             /// For live locations, a direction in which the user is moving, in degrees. Must be between 1 and 360 if specified.
             pub heading: u16,
             /// For live locations, a maximum distance for proximity alerts about approaching another chat member, in meters. Must be between 1 and 100000 if specified.

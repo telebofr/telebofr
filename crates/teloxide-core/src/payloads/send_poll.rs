@@ -4,8 +4,8 @@ use chrono::{DateTime, Utc};
 use serde::Serialize;
 
 use crate::types::{
-    BusinessConnectionId, Message, MessageEntity, ParseMode, PollType, Recipient, ReplyMarkup,
-    ReplyParameters, ThreadId,
+    BusinessConnectionId, InputPollOption, Message, MessageEntity, ParseMode, PollType, Recipient,
+    ReplyMarkup, ReplyParameters, ThreadId,
 };
 
 impl_payload! {
@@ -19,14 +19,20 @@ impl_payload! {
             pub chat_id: Recipient [into],
             /// Poll question, 1-300 characters
             pub question: String [into],
-            /// A JSON-serialized list of answer options, 2-10 strings 1-100 characters each
-            pub options: Vec<String> [collect],
+            /// A JSON-serialized list of 2-10 answer options
+            pub options: Vec<InputPollOption> [collect],
         }
         optional {
             /// Unique identifier of the business connection on behalf of which the message will be sent
             pub business_connection_id: BusinessConnectionId,
             /// Unique identifier for the target message thread (topic) of the forum; for forum supergroups only
             pub message_thread_id: ThreadId,
+            /// Mode for parsing entities in the question. See [formatting options] for more details. Currently, only custom emoji entities are allowed
+            ///
+            /// [formatting options]: https://core.telegram.org/bots/api#formatting-options
+            pub question_parse_mode: ParseMode,
+            /// A JSON-serialized list of special entities that appear in the poll question. It can be specified instead of _question\_parse\_mode_
+            pub question_entities: Vec<MessageEntity> [collect],
             /// True, if the poll needs to be anonymous, defaults to True
             pub is_anonymous: bool,
             /// Poll type, “quiz” or “regular”, defaults to “regular”

@@ -33,6 +33,6 @@ impl ChatJoinRequest {
     ///
     /// Note that this function can return duplicate users.
     pub fn mentioned_users(&self) -> impl Iterator<Item = &User> {
-        std::iter::once(&self.from).chain(self.chat.mentioned_users())
+        std::iter::once(&self.from)
     }
 }

@@ -155,9 +155,8 @@ mod tests {
     use chrono::DateTime;
     use dptree::deps;
     use teloxide_core::types::{
-        Chat, ChatFullInfo, ChatId, ChatKind, ChatPrivate, LinkPreviewOptions, Me, MediaKind,
-        MediaText, Message, MessageCommon, MessageId, MessageKind, Update, UpdateId, UpdateKind,
-        User, UserId,
+        Chat, ChatId, ChatKind, ChatPrivate, LinkPreviewOptions, Me, MediaKind, MediaText, Message,
+        MessageCommon, MessageId, MessageKind, Update, UpdateId, UpdateKind, User, UserId,
     };
 
     use super::HandlerExt;
@@ -197,22 +196,7 @@ mod tests {
                         username: Some(String::from("Laster")),
                         first_name: Some(String::from("laster_alex")),
                         last_name: None,
-                        bio: None,
-                        has_private_forwards: None,
-                        has_restricted_voice_and_video_messages: None,
-                        business_intro: None,
-                        business_location: None,
-                        business_opening_hours: None,
-                        birthdate: None,
-                        personal_chat: None,
                     }),
-                    photo: None,
-                    available_reactions: None,
-                    pinned_message: None,
-                    message_auto_delete_time: None,
-                    has_hidden_members: false,
-                    has_aggressive_anti_spam_enabled: false,
-                    chat_full_info: ChatFullInfo::default(),
                 },
                 kind: MessageKind::Common(MessageCommon {
                     reply_to_message: None,

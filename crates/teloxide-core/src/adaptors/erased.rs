@@ -473,7 +473,7 @@ trait ErasableRequester<'a> {
         &self,
         chat_id: Recipient,
         question: String,
-        options: Vec<String>,
+        options: Vec<InputPollOption>,
     ) -> ErasedRequest<'a, SendPoll, Self::Err>;
 
     fn send_dice(&self, chat_id: Recipient) -> ErasedRequest<'a, SendDice, Self::Err>;
@@ -1234,7 +1234,7 @@ where
         &self,
         chat_id: Recipient,
         question: String,
-        options: Vec<String>,
+        options: Vec<InputPollOption>,
     ) -> ErasedRequest<'a, SendPoll, Self::Err> {
         Requester::send_poll(self, chat_id, question, options).erase()
     }

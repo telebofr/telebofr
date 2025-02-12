@@ -49,6 +49,34 @@ We have finally introduced three different categories for syntactic sugar:
 
 And others like `bot.edit_live_location`, `bot.stop_live_location`, `bot.set_reaction`, `bot.pin`, `bot.unpin`, `bot.edit_caption`, `bot.edit_media`, `bot.edit_reply_markup`, `bot.stop_poll_message` and `bot.copy` methods
 
+#### Breaking changes introduced by newer TBA versions support
+
+Type of argument `options` in `send_poll` method was changed from `Vec<String>` to `Vec<InputPollOption>`. But `InputPollOption` can be constructed from `String/&str`:
+
+```diff
+-let options: Vec<String> = vec!["First".to_owned(), "Second".to_owned(), "Third".to_owned()];
+-bot.send_poll(msg.chat.id, "Question", options).await?;
++let options: Vec<InputPollOption> = vec!["First".into(), "Second".into(), "Third".into()];
++bot.send_poll(msg.chat.id, "Question", options).await?;
+```
+
+`getChat` method now returns `ChatFullInfo` struct instead of `Chat` and most of the fields and methods was moved from `Chat` to `ChatFullInfo`.
+Also `available_reactions` was moved from `Chat` to `ChatPublicFullInfo`. `ChatFullInfo` got `available_reactions` method for convenience:
+
+```diff
+-let chat: Chat = bot.get_chat(msg.chat.id).await?;
+-let availible_reactions = chat.available_reactions;
++let chat: ChatFullInfo = bot.get_chat(msg.chat.id).await?;
++let availible_reactions = chat.available_reactions();
+```
+
+`live_period` field type became `LivePeriod` everywhere instead of `u32` and it implements `Into<LivePeriod> for u32`:
+
+```diff
+-live_period: Some(1),
++live_period: Some(1.into()),
+```
+
 ## 0.11 -> 0.12
 
 ### teloxide

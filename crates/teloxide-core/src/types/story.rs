@@ -20,7 +20,7 @@ impl Story {
         let username = match &self.chat.kind {
             ChatKind::Public(c) => match &c.kind {
                 super::PublicChatKind::Channel(c) => c.username.as_ref(),
-                super::PublicChatKind::Group(_) => None,
+                super::PublicChatKind::Group => None,
                 super::PublicChatKind::Supergroup(g) => g.username.as_ref(),
             },
             ChatKind::Private(c) => c.username.as_ref(),
@@ -35,8 +35,7 @@ impl Story {
 #[cfg(test)]
 mod tests {
     use crate::types::{
-        Chat, ChatFullInfo, ChatId, ChatKind, ChatPublic, PublicChatKind, PublicChatSupergroup,
-        Story, StoryId,
+        Chat, ChatId, ChatKind, ChatPublic, PublicChatKind, PublicChatSupergroup, Story, StoryId,
     };
 
     #[test]
@@ -44,34 +43,13 @@ mod tests {
         let story = Story {
             chat: Chat {
                 id: ChatId(-1001389841361),
-                kind: ChatKind::Public(Box::new(ChatPublic {
+                kind: ChatKind::Public(ChatPublic {
                     title: Some("GNOME".to_owned()),
                     kind: PublicChatKind::Supergroup(PublicChatSupergroup {
                         username: Some("gnome_ru".to_owned()),
-                        active_usernames: None,
                         is_forum: false,
-                        sticker_set_name: None,
-                        can_set_sticker_set: None,
-                        custom_emoji_sticker_set_name: None,
-                        permissions: None,
-                        slow_mode_delay: None,
-                        unrestrict_boost_count: None,
-                        linked_chat_id: None,
-                        location: None,
-                        join_to_send_messages: None,
-                        join_by_request: None,
                     }),
-                    description: None,
-                    invite_link: None,
-                    has_protected_content: None,
-                })),
-                photo: None,
-                available_reactions: None,
-                pinned_message: None,
-                message_auto_delete_time: None,
-                has_hidden_members: false,
-                has_aggressive_anti_spam_enabled: false,
-                chat_full_info: ChatFullInfo::default(),
+                }),
             },
             id: StoryId(420),
         };

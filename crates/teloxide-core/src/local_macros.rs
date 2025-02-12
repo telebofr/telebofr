@@ -646,7 +646,7 @@ macro_rules! requester_forward {
 
         fn send_poll<C, Q, O>(&self, chat_id: C, question: Q, options: O) -> Self::SendPoll where C: Into<Recipient>,
         Q: Into<String>,
-        O: IntoIterator<Item = String> {
+        O: IntoIterator<Item = InputPollOption> {
             let this = self;
             $body!(send_poll this (chat_id: C, question: Q, options: O))
         }

@@ -47,6 +47,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `From<&Message> for MessageId` impl ([#1271][pr1271])
 - `protect_content` parameter to the `sendVoice` method ([#1265][pr1265])
 
+- Support for TBA 7.3 ([#1159](pr1159))
+  - Add `via_join_request` field to `ChatMemberUpdated` struct
+  - Add `LivePeriod` enum and replace `u32` with it in all `live_period` fields
+  - Add `live_period` parameter to `editMessageLiveLocation` method
+  - Add `question_entities` field to `Poll` struct
+  - Add `text_entities` filed to `PollOption` struct
+  - Add `question_parse_mode` and `question_entities` parameters to `sendPoll` method
+  - Add `InputPollOption` struct
+  - Add `BackgroundFill` and `BackgroundType` enum
+  - Add `ChatBackground` variant to `MessageKind` enum
+  - Add `max_reaction_count` field to `ChatFullInfo` struct
+  - Document that .MP3 and .M4A files can be used as voice messages
+
 [pr1157]: https://github.com/teloxide/teloxide/pull/1157
 [pr1264]: https://github.com/teloxide/teloxide/pull/1264
 [pr1271]: https://github.com/teloxide/teloxide/pull/1271
@@ -73,6 +86,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Remove a useless generic type in the `KeyboardMarkup::selective` function ([#1176][pr1176])
 
+- Support for TBA 7.3 ([#1159](pr1159))
+  - Change `options` parameter type in method `sendPoll` to `InputPollOption`
+  - Move most of the fields and methods from `Chat` to `ChatFullInfo` struct
+  - Return `ChatFullInfo` struct from `getChat` method instead of `Chat`
+
 [pr1131]: https://github.com/teloxide/teloxide/pull/1131
 [pr1134]: https://github.com/teloxide/teloxide/pull/1134
 [pr1146]: https://github.com/teloxide/teloxide/pull/1146
@@ -83,6 +101,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Removed
 
 - `Currency` enum removed, its usages replaced with `String`.
+
+- Support for TBA 7.3 ([#1159](pr1159))
+  - Remove some degraded functionality (because of `Chat` to `ChatFullInfo` migration):
+    - `fn mentioned_users` from `chat_member_updated.rs` and `chat_join_request.rs` lost ability to track chat users
+    - `fn mentioned_users` from `Message` lost ability to track chat users (e.g. from pins) and chat users from forward
+    - `fn mentioned_users_rec` was removed from `Chat` and not included in `ChatFullInfo` struct
+
+[pr1159]: https://github.com/teloxide/teloxide/pull/1159
 
 ## 0.10.1 - 2024-08-17
 

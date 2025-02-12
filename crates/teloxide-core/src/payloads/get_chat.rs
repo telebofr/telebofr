@@ -2,14 +2,14 @@
 
 use serde::Serialize;
 
-use crate::types::{Chat, Recipient};
+use crate::types::{ChatFullInfo, Recipient};
 
 impl_payload! {
-    /// Use this method to get up to date information about the chat (current name of the user for one-on-one conversations, current username of a user, group or channel, etc.). Returns a [`Chat`] object on success.
+    /// Use this method to get up to date information about the chat (current name of the user for one-on-one conversations, current username of a user, group or channel, etc.). Returns a [`ChatFullInfo`] object on success.
     ///
-    /// [`Chat`]: crate::types::Chat
+    /// [`ChatFullInfo`]: crate::types::ChatFullInfo
     #[derive(Debug, PartialEq, Eq, Hash, Clone, Serialize)]
-    pub GetChat (GetChatSetters) => Chat {
+    pub GetChat (GetChatSetters) => ChatFullInfo {
         required {
             /// Unique identifier for the target chat or username of the target channel (in the format `@channelusername`)
             pub chat_id: Recipient [into],

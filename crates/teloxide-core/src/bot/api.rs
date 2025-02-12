@@ -6,8 +6,8 @@ use crate::{
     requests::{JsonRequest, MultipartRequest},
     types::{
         BotCommand, BusinessConnectionId, ChatId, ChatPermissions, InlineQueryResult, InputFile,
-        InputMedia, InputSticker, LabeledPrice, MessageId, Recipient, Rgb, StickerFormat, ThreadId,
-        UserId,
+        InputMedia, InputPollOption, InputSticker, LabeledPrice, MessageId, Recipient, Rgb,
+        StickerFormat, ThreadId, UserId,
     },
     Bot,
 };
@@ -283,7 +283,7 @@ impl Requester for Bot {
     where
         C: Into<Recipient>,
         Q: Into<String>,
-        O: IntoIterator<Item = String>,
+        O: IntoIterator<Item = InputPollOption>,
     {
         Self::SendPoll::new(self.clone(), payloads::SendPoll::new(chat_id, question, options))
     }

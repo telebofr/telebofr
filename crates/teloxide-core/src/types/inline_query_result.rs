@@ -1271,7 +1271,7 @@ mod tests {
             longitude: 1.0,
             title: String::from("title"),
             horizontal_accuracy: Some(1.0),
-            live_period: Some(1),
+            live_period: Some(1.into()),
             heading: Some(1),
             proximity_alert_radius: Some(1),
             reply_markup: Some(InlineKeyboardMarkup::default()),

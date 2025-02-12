@@ -11,18 +11,29 @@ use crate::types::{Chat, ChatInviteLink, ChatMember, User};
 pub struct ChatMemberUpdated {
     /// Chat the user belongs to
     pub chat: Chat,
+
     /// Performer of the action, which resulted in the change
     pub from: User,
+
     /// Date the change was done
     #[serde(with = "crate::types::serde_date_from_unix_timestamp")]
     pub date: DateTime<Utc>,
+
     /// Previous information about the chat member
     pub old_chat_member: ChatMember,
+
     /// New information about the chat member
     pub new_chat_member: ChatMember,
+
     /// Chat invite link, which was used by the user to join the chat; for
     /// joining by invite link events only.
     pub invite_link: Option<ChatInviteLink>,
+
+    /// `true`, if the user joined the chat after sending a direct join request
+    /// without using an invite link and being approved by an administrator
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub via_join_request: bool,
+
     #[serde(default)]
     /// True, if the user joined the chat via a chat folder invite link
     pub via_chat_folder_invite_link: bool,
@@ -42,6 +53,5 @@ impl ChatMemberUpdated {
             &self.new_chat_member.user,
         ]
         .into_iter()
-        .chain(self.chat.mentioned_users())
     }
 }
